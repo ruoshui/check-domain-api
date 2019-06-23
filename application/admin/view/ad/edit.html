@@ -1,0 +1,162 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+    .layui-form-label{
+        padding: 8px !important;
+    }
+</style>
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li>
+            <a href="{:url('admin/ad/index')}"><i class="layui-icon layui-icon-list"></i> 广告列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+        <li class="layui-this">
+            <i class="layui-icon layui-icon-edit"></i> 编辑
+        </li>
+        <li>
+            <a href="{:url('admin/ad/typelist')}"><i class="layui-icon layui-icon-list"></i> 广告类型</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <form class="layui-form layui-form-pane" method="post" style="margin-top: 20px;">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">广告标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" value="{$data.title}" required lay-verify="required" placeholder="广告标题" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">广告类型</label>
+                <div class="layui-input-inline" style="width: 400px;">
+                    <select name="type" lay-verify="required">
+                        <option value=""></option>
+                        {foreach $adtypes as $v}
+                        <option value="{$v.id}"{$data.type == $v.id ? ' selected' : ''}>{$v.type}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item upload">
+                <label class="layui-form-label">广告图片</label>
+                <div class="layui-input-inline" style="width: 400px;">
+                    <input type="text" name="img" value="{$data.img}" placeholder="留空则使用默认图片" autocomplete="off" class="layui-input upload-input">
+                </div>
+                <button type="button" class="layui-btn upload-button"><i class="layui-icon layui-icon-upload"></i> 上传图片到本地</button>
+                <button type="button" class="layui-btn upload-network"><i class="layui-icon layui-icon-upload"></i> 传到网络</button>
+                <img onclick="showImg(this.src);" src="{$data.img}" class="upload-img" style="height: 38px;border-radius: 2px;">
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">广告内容</label>
+                <div class="layui-input-block">
+                    <textarea class="layui-textarea layui-hide" name="content" placeholder="可为空，有广告链接时，直接跳转到广告链接" required lay-verify="content" id="editor">{$data.content}</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">跳转链接</label>
+                <div class="layui-input-block">
+                    <input type="text" name="url" value="{$data.url}" placeholder="可为空，此处不填写才显示广告内容" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签</label>
+                <div class="layui-input-block">
+                    <input type="text" name="label" required lay-verify="required" value="{$data.label}" placeholder="1-3个，格式: &lt;p&gt;必看&lt;/p&gt;&lt;p&gt;实事&lt;/p&gt;&lt;p&gt;震撼&lt;/p&gt;" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">阅读原文</label>
+                <div class="layui-input-block">
+                    <input type="text" name="yuanwen" value="{$data.yuanwen}" placeholder="阅读原文链接" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item upload">
+                <label class="layui-form-label">微信二维码</label>
+                <div class="layui-input-inline" style="width: 400px;">
+                    <input type="text" name="foot_wx" value="{$data.foot_wx}" placeholder="下方微信二维码" autocomplete="off" class="layui-input upload-input">
+                </div>
+                <button type="button" class="layui-btn upload-button"><i class="layui-icon layui-icon-upload"></i> 上传图片到本地</button>
+                <button type="button" class="layui-btn upload-network"><i class="layui-icon layui-icon-upload"></i> 传到网络</button>
+                <img onclick="showImg(this.src);" src="{$data.foot_wx}" class="upload-img" style="height: 38px;border-radius: 2px;">
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-block">
+                    <input type="text" name="desc" value="{$data.desc}" placeholder="仅限管理员备注，不使用在其他地方" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" name="sort" value="{$data.sort}" required lay-verify="required|number" value="500" placeholder="排序" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">访问量</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" name="view" value="{$data.view}" required lay-verify="required|number" value="0" placeholder="访问量" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用"{$data.status ==1 ? ' checked' : ''}>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="editinfo">立即提交</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li class="layui-this">简介说明</li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <p>在系统设置里面可以设置每个广告显示的个数等</p>
+            <p>广告类型（分类）</p>
+            {foreach $adtypes as $v}
+            <p>{$v.id}：<span style="color: #098;">{$v.type}</span> （{$v.desc}）</p>
+            {/foreach}
+        </blockquote>
+    </div>
+
+</div>
+
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+    var editId = "{$data.id}";
+</script>
+{/block}

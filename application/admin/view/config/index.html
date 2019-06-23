@@ -1,0 +1,73 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<div class="layui-tab layui-tab-card">
+
+	<ul class="layui-tab-title">
+		<li {:input('param.group')=='base'||input('param.group') == null?' class="layui-this"':''}>
+			<a href="{:url('admin/config/index',['group'=>'base'])}">基础</a>
+		</li>
+		<li {:input('param.group')=='sys' ?' class="layui-this"':''}>
+			<a href="{:url('admin/config/index',['group'=>'sys'])}">系统</a>
+		</li>
+		<li {:input('param.group')=='video' ?' class="layui-this"':''}>
+			<a href="{:url('admin/config/index',['group'=>'video'])}">视频<span class="layui-badge-dot"></span></a>
+		</li>
+		<li {:input('param.group')=='qita' ?' class="layui-this"':''}>
+			<a href="{:url('admin/config/index',['group'=>'qita'])}">其他</a>
+		</li>
+		<li>
+			<a href="{:url('admin/config/create',['group'=>input('param.group')])}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+		</li>
+	</ul>
+
+	<div class="layui-tab-content" style="background: #FFFFFF;">
+
+		<table id="dataTable"></table>
+
+		<script type="text/html" id="status">
+			<input type="checkbox" name="status" lay-skin="switch" lay-text="启用|禁用" data-href="{:url('status')}?t=configs&id={{ d.id }}" lay-filter="switchStatus" value="{{ d.status }}" {{ d.status==1 ? 'checked' : '' }}>
+		</script>
+
+		<script type="text/html" id="barDemo">
+			<div class="layui-btn-group">
+				<a class="layui-btn layui-btn-primary layui-btn-xs" href="{:url('edit')}?id={{ d.id }}"><i class="layui-icon layui-icon-edit"></i>改</a>
+				<a class="layui-btn layui-btn-primary layui-btn-xs" onclick="del('configs', {{ d.id }});"><i class="layui-icon layui-icon-delete"></i>删</a>
+			</div>
+		</script>
+
+	</div>
+</div>
+{/block}
+
+
+{block name="js"}
+<script>
+	layui.use(['table', 'layer', 'form'], function() {
+		var table = layui.table,
+				layer = layui.layer,
+				form = layui.form,
+				$ = layui.jquery;
+
+		table.render({
+			elem: '#dataTable',
+			url: "{:url('?group='.input('param.group'))}",
+			title: '数据表',
+			limit: 20,
+			cols: [
+				[
+					{fixed: 'left', title:'操作',	width:120,	align:'center',	toolbar:'#barDemo'},
+					{field: 'status',title:'状态',	width:100,	align:'center',	sort:true,	templet:'#status'},
+					{field: 'sort',  title:'排序',	width:100,	align:'center',	sort:true},
+					{field: 'type',  title:'类型',	width:100,	align:'center',	sort:true},
+					{field: 'title', title:'标题',	width:150,	align:'right',	sort:true},
+					{field: 'name',  title:'标识',	width:250,	align:'left',	sort:true},
+					{field: 'value', title:'默认值'},
+					{field: 'tips', title:'配置提示'},
+				]
+			],
+			page: true
+		});
+	});
+</script>
+{/block}

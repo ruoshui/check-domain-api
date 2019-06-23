@@ -1,0 +1,162 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+    .layui-form-label{
+        width: 200px !important;
+    }
+    .layui-input-inline{
+        width: 400px !important;
+    }
+    #tab td{
+        padding: 8px;text-align: center;
+    }
+</style>
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li>
+            <a href="{:url('admin/jump/index')}"><i class="layui-icon layui-icon-list"></i> 跳转列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/jump/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+        <li class="layui-this">
+            <i class="layui-icon layui-icon-edit"></i> 编辑
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <form class="layui-form layui-form-pane" method="post" style="margin-top: 20px;">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">标签名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" value="{$data.name}" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 跳转名称，便于识别</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">选择域名</label>
+                <div class="layui-input-inline">
+                    <select name="did">
+                        <option value=""></option>
+                        {foreach $domains as $v}
+                        <option value="{$v.id}" {$data.did == $v.id ? 'selected' : ''}>{$v.domain}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">访问量</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="view" value="{$data.view}" value="{:mt_rand(0,9999)}" required lay-verify="number" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 访问量</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">目标网址</label>
+                <div class="layui-input-inline" style="width: 600px !important;">
+
+                    <table class="layui-table" id="tab" name="tab" style="margin: 0;">
+                        <thead>
+                        <tr>
+                            <th width="100">排序</th>
+                            <th>图片地址</th>
+                            <th width="80"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="amsTbody">
+
+                        {foreach $data['url'] as $k=>$v}
+                        <tr>
+                            <td>
+                                <input type="text" name="sort[]" value="{$k}" lay-verify="required|number" placeholder="排序" autocomplete="off" class="layui-input">
+                            </td>
+                            <td>
+                                <input type="text" name="url[]" value="{$v}" lay-verify="required|url" placeholder="目标网址，http开头" autocomplete="off" class="layui-input">
+                            </td>
+                            <td>
+                                <input type="button" value="➕" class="layui-btn layui-btn-primary layui-btn-sm" onclick="addRow();return false;"><input type="button" value="➖" class="layui-btn layui-btn-primary layui-btn-sm" onclick="deleteRow(this);return false;">
+                            </td>
+                        </tr>
+                        {/foreach}
+
+                        </tbody>
+                    </table>
+                    <div class="layui-form-mid layui-word-aux">* 排序数字越小越靠上，排序不能相同，相同排序只会保存一个</div>
+
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" {$data.status == 1 ? 'checked' : ''}>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="editinfo">立即保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-tab layui-tab-card">
+    <ul class="layui-tab-title">
+        <li class="layui-this">简介说明</li>
+    </ul>
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <p><b>简介说明：</b></p>
+            <p><span style="color: #FF5722;">1、简介说明：</span>简介说明</p>
+            <p><span style="color: #FF5722;">2、简介说明：</span>简介说明</p>
+        </blockquote>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+    var editId = "{$data.id}";
+</script>
+
+<script type="text/javascript">
+    //添加行
+    function addRow() {
+        var tab = document.getElementById('tab');
+
+        //添加一行;
+        var tr = tab.insertRow();
+
+        var td1 = tr.insertCell();
+        var td2 = tr.insertCell();
+        var td3 = tr.insertCell();
+
+        td1.innerHTML = "<input type='text' name='sort[]' lay-verify='required' placeholder='排序' autocomplete='off' class='layui-input'>";
+        td2.innerHTML = "<input type='text' name='url[]' lay-verify='required|url' placeholder='目标网址，http开头' autocomplete='off' class='layui-input'>";
+        td3.innerHTML = "<input type='button' value='➕' class='layui-btn layui-btn-primary layui-btn-sm' onclick='addRow();return false;'><input type='button' value='➖' class='layui-btn layui-btn-primary layui-btn-sm' onclick='deleteRow(this);return false;'>";
+    }
+
+    //删除行;(obj代表连接对象)
+    function deleteRow(obj) {
+        var tab = document.getElementById('tab');
+        //获取tr对象;
+        var tr = obj.parentNode.parentNode;
+
+        if(tab.rows.length > 2) {
+            //tr.parentNode，指的是，table对象;移除子节点;
+            tr.parentNode.removeChild(tr);
+        }
+        //重新生成行号;
+        initRows(document.getElementById('tab'));
+    }
+</script>
+{/block}

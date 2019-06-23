@@ -1,0 +1,165 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+	.layui-form-label{
+		width: 200px !important;
+	}
+	.layui-input-inline{
+		width: 400px !important;
+	}
+</style>
+<div class="layui-tab layui-tab-card">
+
+	<ul class="layui-tab-title">
+		<li>
+			<a href="{:url('admin/config/index',['group'=>'base'])}">基础</a>
+		</li>
+		<li>
+			<a href="{:url('admin/config/index',['group'=>'sys'])}">系统</a>
+		</li>
+		<li>
+			<a href="{:url('admin/config/index',['group'=>'video'])}">视频<span  class="layui-badge-dot"></span></a>
+		</li>
+		<li>
+			<a href="{:url('admin/config/index',['group'=>'qita'])}">其他</a>
+		</li>
+		<li>
+			<a href="{:url('admin/config/create',['group'=>input('param.group')])}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+		</li>
+		<li class="layui-this">
+			<i class="layui-icon layui-icon-edit"></i> 编辑
+		</li>
+	</ul>
+
+	<div class="layui-tab-content" style="background: #FFFFFF;">
+		<form class="layui-form layui-form-pane" method="post">
+			<input type="hidden" name="system" value="1" />
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置分组</label>
+				<div class="layui-input-inline">
+					<select name="group" lay-verify="required">
+						<option value="base">[base]基础</option>
+						<option value="sys"       {$config.group=='sys'      ? 'selected' : ''}>[sys]系统</option>
+						<option value="video"     {$config.group=='video'    ? 'selected' : ''}>[video]视频</option>
+						<option value="qita"     {$config.group=='qita'    ? 'selected' : ''}>[qita]其他</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-inline">
+					<input type="text" name="sort" value="{$config.sort}" required lay-verify="number" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置标题</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" value="{$config.title}" required lay-verify="required" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置名称</label>
+				<div class="layui-input-inline">
+					<input type="text" name="name" value="{$config.name}" required lay-verify="required" placeholder="由英文字母和下划线组成" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置类型</label>
+				<div class="layui-input-inline">
+					<select name="type" lay-verify="required">
+						<option value="input" {$config.type=='input' ? ' selected': ''}>[input]单行文本</option>
+						<option value="textarea" {$config.type=='textarea' ? ' selected': ''}>[textarea]多行文本</option>
+						<option value="switch" {$config.type=='switch' ? ' selected': ''}>[switch]开关</option>
+						<option value="radio" {$config.type=='radio' ? ' selected': ''}>[radio]单选按钮</option>
+						<option value="checkbox" {$config.type=='checkbox' ? ' selected': ''}>[checkbox]多选框</option>
+						<option value="select" {$config.type=='select' ? ' selected': ''}>[select]下拉框</option>
+						<option value="image" {$config.type=='image' ? ' selected': ''}>[image]图片</option>
+						<option value="file" {$config.type=='file' ? ' selected': ''}>[file]文件</option>
+
+						<!--<option value="tags" {$config.type=='tags' ? ' selected': ''}>[tags]标签</option>-->
+						<!--<option value="hidden" {$config.type=='hidden' ? ' selected': ''}>[hidden]隐藏</option>-->
+						<!--<option value="array" {$config.type=='array' ? ' selected': ''}>[array]数组</option>-->
+
+						<!--<option value="datetime" {$config.type=='datetime' ? ' selected': ''}>[datetime]日期+时间</option>-->
+						<!--<option value="date" {$config.type=='date' ? ' selected': ''}>[date]日期</option>-->
+						<!--<option value="time" {$config.type=='time' ? ' selected': ''}>[time]时间</option>-->
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置默认值</label>
+				<div class="layui-input-inline">
+					<textarea name="value" placeholder="配置类型为数组时请按如下格式填写：
+值|值|值" class="layui-textarea">{$config.value}</textarea>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置选项</label>
+				<div class="layui-input-inline">
+					<textarea name="options" placeholder="仅适用类型：单选按钮、多选框、下拉框、开关，格式：
+选项值:选项名
+选项值:选项名
+1:北京
+2:上海" class="layui-textarea">{$config.options}</textarea>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">配置提示</label>
+				<div class="layui-input-inline">
+					<textarea name="tips" placeholder="[选填，支持HTML]" class="layui-textarea">{$config.tips}</textarea>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">状态</label>
+				<div class="layui-input-inline">
+					<input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" {$config.status==1? ' checked': ''}>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="doit">立即提交</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</div>
+{/block}
+
+
+{block name="js"}
+<script type="text/javascript">
+	layui.use(['form', 'layer'], function() {
+		var $ = layui.jquery,
+				form = layui.form,
+				layer = layui.layer;
+
+		//监听提交
+		form.on('submit(doit)', function(data) {
+			$.post("{:url()}?id={$config.id}", data.field, function(res) {
+				console.log(data);
+				if(res.code == 1) {
+					layer.msg(res.msg, {icon: 1, time:1000}, function() {
+						// location.href = "{:url('index')}";
+						window.history.back(-1);
+					});
+				} else {
+					layer.msg(res.msg, {icon: 2, time:1000});
+				}
+			}, 'json');
+			return false;
+		});
+	});
+</script>
+{/block}

@@ -1,0 +1,102 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<div class="layui-tab layui-tab-card">
+
+	<ul class="layui-tab-title">
+		<li class="layui-this">
+			<a href="{:url('admin/video/index')}"><i class="layui-icon layui-icon-list"></i> 视频列表</a>
+		</li>
+		<li>
+			<a href="{:url('admin/video/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+		</li>
+	</ul>
+
+	<div class="layui-tab-content" style="background: #FFFFFF;">
+
+		<blockquote class="layui-elem-quote layui-quote-nm">
+			<h2 style="color: #FF5722;">腾讯近期监管比较严格，标题、分享标题、分享描述，尽量不要涉及低俗、暴力、色情等违法违规内容，否则容易被封❗</h2>
+			<h2 style="color: #1E9FFF;">推广前，标题、分享标题、分享描述，请修改得吸引人但又不违法违规❗</h2>
+		</blockquote>
+
+		<div class="layui-btn-group">
+			<form class="layui-form" method="get">
+				<button class="layui-btn layui-btn-primary" onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新当前页面</button>
+				<input type="text" name="so" autocomplete="off" value="{:input('param.so')}" placeholder="搜索关键词" class="layui-btn layui-btn-primary">
+				<button class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i>搜索</button>
+				<a class="layui-btn layui-btn-primary" href="{:url()}"><i class="layui-icon layui-icon-ok-circle"></i>显示全部</a>
+			</form>
+		</div>
+
+		<table id="dataTable"></table>
+
+		<script type="text/html" id="status">
+			<input type="checkbox" name="status" lay-skin="switch" lay-text="已启用|已禁用" data-href="{:url('status')}?t=videos&id={{ d.id }}" lay-filter="switchStatus" value="{{ d.status }}" {{ d.status==1 ? 'checked' : '' }}>
+		</script>
+
+		<script type="text/html" id="img">
+			<img onclick="showImg(this.src);" src="{{ d.img }}" style="max-width: 100%;" alt="">
+		</script>
+
+		<script type="text/html" id="rukou">
+			<div class="layui-btn-group">
+
+				<a class="layui-btn layui-btn-primary layui-btn-xs" href="http://{{d.domain}}/video/{{ d.id }}.html" target="_blank">
+					<i class="layui-icon layui-icon-link"></i>打开
+				</a>
+
+				<a class="layui-btn layui-btn-primary layui-btn-xs"
+				   onclick="showImg('https://api.uomg.com/api/qrcode?url=http://{{d.domain}}/video/{{ d.id }}.html')">
+					<i class="layui-icon layui-icon-chart"></i>二维码
+				</a>
+
+				<a class="layui-btn layui-btn-primary layui-btn-xs"
+				   onclick="layer.alert('http://{{d.domain}}/video/{{ d.id }}.html', {title: false,shade: 0.5,closeBtn: 1,shadeClose: true,anim: 3,btn:false});">
+					<i class="layui-icon layui-icon-search"></i>网址
+				</a>
+
+			</div>
+		</script>
+
+		<script type="text/html" id="barDemo">
+			<div class="layui-btn-group">
+				<a class="layui-btn layui-btn-primary layui-btn-xs" href="{:url('edit')}?id={{ d.id }}"><i class="layui-icon layui-icon-edit"></i>改</a>
+				<a class="layui-btn layui-btn-primary layui-btn-xs" onclick="del('videos', {{ d.id }});"><i class="layui-icon layui-icon-delete"></i>删</a>
+			</div>
+		</script>
+	</div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+	layui.use(['table', 'layer', 'form'], function() {
+		var table = layui.table,
+				layer = layui.layer,
+				form = layui.form,
+				$ = layui.jquery;
+
+		table.render({
+			elem: '#dataTable',
+			url: "{:url()}?so={:trim(input('param.so'))}",
+			title: '数据表',
+			limit: 20,
+			cols: [
+				[
+					{fixed:'left',	title:'操作',	width:120,	align:'center',	toolbar:'#barDemo'},
+					{field:'status',title:'状态',	width:110,	align:'center',	sort:true,	templet:'#status'},
+					{field:'sort',	title:'排序',	width:90,	align:'center',	sort:true},
+					{field:'rukou',	title:'入口网址',	width:210,	align:'center',	templet:'#rukou'},
+					{field:'title',	title:'视频标题',	minWidth:200,	sort:true},
+					{field:'img',	title:'图片',	width:120,	align:'center', templet:'#img'},
+					{field:'miao',	title:'停止秒',	width:100,	align:'center',	sort:true},
+					{field:'view',	title:'访问量',	width:100,	align:'center',	sort:true},
+					{field:'dianzan',title:'👍赞',	width:90,	align:'center',	sort:true},
+				{field:'create_time',	title:'加入时间',	width:180,	align:'center',	sort:true},
+				]
+			],
+			page: true
+		});
+	});
+</script>
+{/block}

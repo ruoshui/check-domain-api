@@ -1,0 +1,131 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+    .layui-form-label{
+        width: 200px !important;
+    }
+    .layui-input-inline{
+        width: 400px !important;
+    }
+</style>
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li>
+            <a href="{:url('admin/wechat_account/index')}"><i class="layui-icon layui-icon-list"></i> 公众号列表</a>
+        </li>
+        <li class="layui-this">
+            <a href="{:url('admin/wechat_account/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <p>此处是说明文档~~~</p>
+        </blockquote>
+        <form class="layui-form layui-form-pane" method="post">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">公众号名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="account_name" required lay-verify="required" placeholder="微信公众平台" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">公众号AppID</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="app_id" id="app_id" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 公众号AppID</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">公众号AppSecret</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="app_secret" id="app_secret" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 公众号AppSecret</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">认证access_token</label>
+                <div class="layui-input-inline">
+                    <textarea name="access_token" id="access_token" required lay-verify="required" placeholder="点击下方获取按钮自动生成" class="layui-textarea"></textarea>
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 认证access_token</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">认证ticket</label>
+                <div class="layui-input-inline">
+                    <textarea name="ticket" id="ticket" required lay-verify="required" placeholder="点击下方获取按钮自动生成" class="layui-textarea"></textarea>
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 认证ticket</div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">Token有效期</label>
+                    <div class="layui-input-inline" style="width: 188px !important;">
+                        <input type="text" name="update_time" id="update_time" placeholder="开始" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 188px !important;">
+                        <input type="text" name="expire_time" id="expire_time" placeholder="失效" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="sort" value="500" required lay-verify="number" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 数字越大越靠前</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" checked>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="create">立即提交</button>
+                    <a class="layui-btn layui-btn-danger" onclick="getToken()">获取</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+
+    function getToken() {
+        var app_id,app_secret;
+        app_id	= $("#app_id").val();
+        app_secret = $("#app_secret").val();
+        $.get("{:url('getToken')}?app_id="+app_id+"&app_secret="+app_secret,function (res) {
+            if (res.code == 1) {
+                if (res.data.access_token && res.data.ticket){
+                    $("#access_token").val(res.data.access_token);
+                    $("#ticket").val(res.data.ticket);
+                    $("#update_time").val(res.data.update_time);
+                    $("#expire_time").val(res.data.expire_time);
+                }
+                layer.msg(res.msg, {icon:1});
+            } else{
+                layer.msg(res.msg, {icon:2});
+            }
+        }, 'json');
+        return false;
+    }
+</script>
+{/block}

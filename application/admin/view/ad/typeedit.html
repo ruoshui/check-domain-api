@@ -1,0 +1,97 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+    .layui-form-label{
+        padding: 8px !important;
+    }
+</style>
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li>
+            <a href="{:url('admin/ad/index')}"><i class="layui-icon layui-icon-list"></i> 广告列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/typelist')}"><i class="layui-icon layui-icon-list"></i> 广告类型</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/typecreate')}"><i class="layui-icon layui-icon-add-1"></i> 添加类型</a>
+        </li>
+        <li class="layui-this">
+            <i class="layui-icon layui-icon-edit"></i> 编辑
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <form class="layui-form layui-form-pane" method="post" style="margin-top: 20px;">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">广告类型</label>
+                <div class="layui-input-block">
+                    <input type="text" name="type" value="{$type.type}" required lay-verify="required" placeholder="广告类型" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">广告类型介绍</label>
+                <div class="layui-input-block">
+                    <input type="text" name="desc" value="{$type.desc}" placeholder="广告类型介绍" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" required lay-verify="required|number" value="{$type.sort}" placeholder="排序" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" {$type.status==1 ? 'checked' : ''}>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="doit">立即提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+
+{block name="js"}
+<script type="text/javascript">
+    layui.use(['form', 'layer', 'layedit', 'upload'], function() {
+        var $ = layui.jquery,
+            form = layui.form,
+            layedit = layui.layedit,
+            upload = layui.upload,
+            layer = layui.layer;
+
+        //监听提交
+        form.on('submit(doit)', function(data) {
+            $.post("{:url('',['id'=>$type.id])}", data.field, function(res) {
+                if(res.code == 1) {
+                    layer.msg(res.msg, {icon: 1, time:1000}, function() {
+                        location.href = "{:url('typelist')}";
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 2, time:1000});
+                }
+            }, 'json');
+            return false;
+        });
+
+    });
+</script>
+{/block}

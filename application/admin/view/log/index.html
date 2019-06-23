@@ -1,0 +1,55 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<div class="layui-tab layui-tab-card">
+
+	<ul class="layui-tab-title">
+		<li class="layui-this">
+			<a href="{:url('admin/article/index')}"><i class="layui-icon layui-icon-list"></i> 系统日志</a>
+		</li>
+	</ul>
+
+	<div class="layui-tab-content" style="background: #FFFFFF;">
+
+		<div class="layui-btn-group">
+			<form class="layui-form" method="get">
+				<button class="layui-btn layui-btn-primary" onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新当前页面</button>
+				<input type="text" name="so" autocomplete="off" value="{:input('param.so')}" placeholder="搜索关键词" class="layui-btn layui-btn-primary">
+				<button class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i>搜索</button>
+				<a class="layui-btn layui-btn-primary" href="{:url()}"><i class="layui-icon layui-icon-ok-circle"></i>显示全部</a>
+			</form>
+		</div>
+
+		<table class="layui-hide" id="dataTable"></table>
+
+	</div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+	layui.use(['table', 'layer', 'form'], function() {
+		var $ = layui.jquery, table = layui.table, layer = layui.layer, form = layui.form;
+
+		table.render({
+			elem: '#dataTable',
+			url: "{:url()}?so={:trim(input('param.so'))}",
+			title: '数据表',
+			totalRow: true,
+			limit: 20,
+			cols: [
+				[
+					{field: 'id',		title:'编 号',	width:90,	align:'center',	sort:true,	totalRowText:'编号',	fixed:'left'},
+					{field: 'username',	title:'用户名',	width:150,	align:'center',	sort:true,	totalRowText:'用户名'},
+					{field: 'action',	title:'操 作',											totalRowText:'操 作'},
+					{field: 'ip',		title:'IP地址',	width:150,	align:'center',	sort:true,	totalRowText:'IP'},
+					{field: 'ipAscription',	title:'IP归属地',	width:220,	align:'center',				totalRowText:'IP归属地'},
+					{field: 'create_time',	title:'操作时间',	width:180,	align:'center',				totalRowText:'操作时间'},
+				]
+			],
+			page: true
+		});
+	});
+
+</script>
+{/block}

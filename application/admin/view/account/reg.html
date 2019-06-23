@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>用户注册</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" type="text/css" href="__LAYUI__/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="__STYLE__/css/admin.css" />
+		<link rel="stylesheet" type="text/css" href="__STYLE__/css/login.css" />
+	</head>
+
+	<body>
+		<div class="layadmin-user-login layadmin-user-display-show">
+			<form class="layui-form" method="post">
+				<div class="layadmin-user-login-main">
+					<div class="layadmin-user-login-box layadmin-user-login-header">
+						<h2>zlwcmsAdmin</h2>
+						<p>官方出品的单页面后台管理模板系统</p>
+					</div>
+
+					<div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+
+						<div class="layui-form-item">
+							<label class="layadmin-user-login-icon layui-icon layui-icon-username"></label>
+							<input type="text" name="username" required lay-verify="required|username" placeholder="用户名" autocomplete="off" class="layui-input">
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layadmin-user-login-icon layui-icon layui-icon-password"></label>
+							<input type="text" name="password" required lay-verify="required|password" placeholder="密码" autocomplete="off" class="layui-input">
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layadmin-user-login-icon layui-icon layui-icon-cellphone"></label>
+							<input type="text" name="mobile" required lay-verify="required|phone" placeholder="手机号码" autocomplete="off" class="layui-input">
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layadmin-user-login-icon layui-icon layui-icon-dialogue"></label>
+							<input type="text" name="email" required lay-verify="required|email" placeholder="电子邮箱" autocomplete="off" class="layui-input">
+						</div>
+
+						<div class="layui-form-item">
+							<div class="layui-row">
+								<div class="layui-col-xs7">
+									<label class="layadmin-user-login-icon layui-icon layui-icon-vercode"></label>
+									<input type="text" name="vercode" required lay-verify="required" placeholder="图形验证码" autocomplete="off" class="layui-input">
+								</div>
+								<div class="layui-col-xs5">
+									<div style="margin-left: 10px;">
+										<img src="{:captcha_src()}" onclick="this.src='{:captcha_src()}?'+Math.random()" class="layadmin-user-login-codeimg">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="layui-form-item" style="margin-bottom: 20px;">
+							<input type="checkbox" name="xieyi" value="1" lay-skin="primary" title="同意用户协议" checked>
+							<a href="#" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
+						</div>
+
+						<div class="layui-form-item">
+							<button class="layui-btn layui-btn-fluid" lay-submit lay-filter="doit">确认注册</button>
+						</div>
+
+						<div class="layui-trans layui-form-item layadmin-user-login-other">
+							<label>社交账号登入</label>
+							<a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
+							<a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
+							<a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
+							<a href="{:url('admin/account/login')}" class="layadmin-user-jump-change layadmin-link">登陆帐号</a>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="layui-trans layadmin-user-login-footer">
+				<p>
+					© 2019
+					<a href="" target="_blank">layui.com</a>
+				</p>
+				<p>
+					<span><a href="" target="_blank">获取授权</a></span>
+					<span><a href="" target="_blank">在线演示</a></span>
+					<span><a href="" target="_blank">前往官网</a></span>
+				</p>
+			</div>
+
+		</div>
+
+		<script src="__LAYUI__/layui.js"></script>
+		<script type="text/javascript">
+			layui.use(['form', 'layer'], function() {
+				var $ = layui.jquery,
+					form = layui.form,
+					layer = layui.layer;
+
+				//自定义验证规则
+				form.verify({
+					username: function(value) {
+						if(value.length < 3) {
+							return '用户名至少得3个字符啊';
+						}
+					},
+					password: [
+						/^[\S]{6,24}$/, '密码必须6到24位，且不能出现空格'
+					]
+				});
+
+				//监听提交
+				form.on('submit(doit)', function(data) {
+					$.post("{:url()}", data.field, function(res) {
+                        if(res.code == 1) {
+                            layer.msg(res.msg, {icon: 1, time:1000}, function() {
+                                location.href = "{:url('admin/account/login')}";
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2, time:1000});
+                        }
+					}, 'json');
+					return false;
+				});
+			});
+		</script>
+
+	</body>
+
+</html>

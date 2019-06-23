@@ -1,0 +1,109 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li class="layui-this">
+            <a href="{:url('admin/ad/index')}"><i class="layui-icon layui-icon-list"></i> 广告列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/typelist')}"><i class="layui-icon layui-icon-list"></i> 广告类型</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <h2 style="color: #FF5722;">每个类型的广告，都有相应的用处，请不要随意禁用或者删除，可以修改成你自己的广告；</h2>
+        </blockquote>
+
+        <div class="layui-btn-group">
+            <form class="layui-form" method="get">
+                <button class="layui-btn layui-btn-primary" onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新当前页面</button>
+                <input type="text" name="so" autocomplete="off" value="{:input('param.so')}" placeholder="搜索关键词" class="layui-btn layui-btn-primary">
+                <button class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                <a class="layui-btn layui-btn-primary" href="{:url()}"><i class="layui-icon layui-icon-ok-circle"></i>显示全部</a>
+            </form>
+        </div>
+
+        <table id="dataTable"></table>
+
+        <script type="text/html" id="type">
+            {{ d.adtype.type }}
+        </script>
+
+        <script type="text/html" id="status">
+            <input type="checkbox" name="status" lay-skin="switch" lay-text="启用|禁用" data-href="{:url('status')}?t=ads&id={{ d.id }}" lay-filter="switchStatus" value="{{ d.status }}" {{ d.status==1 ? 'checked' : '' }}>
+        </script>
+
+        <script type="text/html" id="img">
+            <img onclick="showImg(this.src);" src="{{ d.img }}" style="max-width: 100%;">
+        </script>
+
+        <script type="text/html" id="barDemo">
+            <div class="layui-btn-group">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" href="/ad/{{ d.id }}.html" target="_blank"><i class="layui-icon layui-icon-search"></i>查看</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" href="{:url('edit')}?id={{ d.id }}"><i class="layui-icon layui-icon-edit"></i>改</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="del('ads', {{ d.id }});"><i class="layui-icon layui-icon-delete"></i>删</a>
+            </div>
+        </script>
+
+    </div>
+</div>
+
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li class="layui-this">简介说明</li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <p>在系统设置里面可以设置每个广告显示的个数等</p>
+            <p>广告类型（分类）</p>
+            {foreach $adtypes as $v}
+            <p>{$v.id}：<span style="color: #098;">{$v.type}</span> （{$v.desc}）</p>
+            {/foreach}
+        </blockquote>
+    </div>
+
+</div>
+{/block}
+
+
+{block name="js"}
+<script type="text/javascript">
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+
+        table.render({
+            elem: '#dataTable',
+            url: "{:url()}?so={:trim(input('param.so'))}",
+            title: '数据表',
+            cellMinWidth: 200,
+            limit: 20,
+            cols: [
+                [
+                    {fixed: 'left',		title:'操作',	width:180,	align:'center',	toolbar:'#barDemo'},
+                    {field: 'status',	title:'状态',	width:100,	align:'center',	sort:true,	templet:'#status'},
+                    {field: 'sort',		title:'排序',	width:100,	align:'center',	sort:true},
+                    {field: 'type',		title:'广告类型',	width:200,	align:'center',	sort:true,	templet:'#type'},
+                    {field: 'title',	title:'广告标题'},
+                    {field: 'url',		title:'广告链接',	width:200},
+                    {field: 'img',		title:'广告图片',	width:120,	align:'center',	templet:'#img'},
+                    {field: 'desc',		title:'备注信息'},
+                // {field: 'create_time',	title:'创建时间',width:180,	align:'center',	sort:true},
+                ]
+            ],
+            page: true
+        });
+    });
+</script>
+{/block}

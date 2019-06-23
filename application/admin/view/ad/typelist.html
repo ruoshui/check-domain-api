@@ -1,0 +1,68 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li>
+            <a href="{:url('admin/ad/index')}"><i class="layui-icon layui-icon-list"></i> 广告列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+        <li class="layui-this">
+            <a href="{:url('admin/ad/typelist')}"><i class="layui-icon layui-icon-list"></i> 广告类型</a>
+        </li>
+        <li>
+            <a href="{:url('admin/ad/typecreate')}"><i class="layui-icon layui-icon-add-1"></i> 添加类型</a>
+        </li>
+    </ul>
+
+    <script type="text/html" id="status">
+        <a class="layui-btn layui-btn-primary layui-btn-xs">{{ d.status==1 ? '已启用' : '已禁用' }}</a>
+    </script>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <table id="dataTable"></table>
+    </div>
+
+    <script type="text/html" id="barDemo">
+        <div class="layui-btn-group">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" href="{:url('typeedit')}?id={{ d.id }}"><i class="layui-icon layui-icon-edit"></i>改</a>
+            <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="del('adtypes', {{ d.id }});"><i class="layui-icon layui-icon-delete"></i>删</a>
+        </div>
+    </script>
+
+</div>
+{/block}
+
+
+{block name="js"}
+<script type="text/javascript">
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+
+        table.render({
+            elem: '#dataTable',
+            url: "{:url()}",
+            title: '数据表',
+            cellMinWidth: 200,
+            limit: 20,
+            cols: [
+                [
+                    {fixed:'left',	title:'操作',	width:120,	align:'center',	toolbar:'#barDemo'},
+                    {field:'id',	title:'编号',	width:100,	align:'center',	sort:true},
+                    {field:'status',title:'状态',	width:100,	align:'center',	sort:true,	templet:'#status'},
+                    {field:'sort',	title:'排序',	width:100,	align:'center',	sort:true},
+                    {field:'type',	title:'广告类型',	width:200,	align:'center',	sort:true},
+                    {field:'desc',	title:'类型介绍'},
+                ]
+            ],
+            page: true
+        });
+    });
+</script>
+{/block}

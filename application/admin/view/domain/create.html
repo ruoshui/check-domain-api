@@ -1,0 +1,127 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+    .layui-form-label{
+        width: 200px !important;
+    }
+    .layui-input-inline{
+        width: 400px !important;
+    }
+</style>
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li>
+            <a href="{:url('admin/domain/index')}"><i class="layui-icon layui-icon-list"></i> 域名列表</a>
+        </li>
+        <li class="layui-this">
+            <a href="{:url('admin/domain/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <form class="layui-form layui-form-pane" method="post" style="margin-top: 20px;">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属公众号</label>
+                <div class="layui-input-inline">
+                    <select name="gid" lay-verify="required">
+                        <option value=""></option>
+                        {foreach $gzhList as $gzh}
+                        <option value="{$gzh.id}">{$gzh.account_name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="domain" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 不需要http://，例如：www.qq.com，支持泛域名，例如：*.qq.com</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名类型</label>
+                <div class="layui-input-inline">
+                    <select name="type" lay-verify="required">
+                        <option value=""></option>
+                        <option value="1">入口域名「需要分享接口」</option>
+                        <option value="2">落地域名「无要求，随意」</option>
+                        <option value="3">分享域名「需要分享接口」</option>
+                        <option value="9">跳转域名「回退跳转专用」</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="sort" value="500" required lay-verify="number" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 数字越大排列越靠前</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名接口</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="jiekou" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 可为空，微信域名查询接口产生的查询信息</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注信息</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="desc" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">* 仅限管理员备注信息，其他地方不使用、不显示</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">请求接口ip地址</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="ip" autocomplete="off" class="layui-input" lay-verify="ip">
+                </div>
+                <div class="layui-form-mid layui-word-aux">请求接口ip地址</div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名检测</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="jiance" value="1" lay-skin="switch" lay-text="启用|禁用" checked>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" checked>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="create">立即提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-tab layui-tab-card">
+    <ul class="layui-tab-title">
+        <li class="layui-this">简介说明</li>
+    </ul>
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <p><b>仅能添加两种域名：</b></p>
+            <p><span style="color: #FF5722;">1、普通域名：</span>常见的域名，包括顶级域名、二级域名等，例如：baidu.com 或 www.baidu.com</p>
+            <p><span style="color: #FF5722;">2、泛 域 名：</span>无限二级域名，格式：*.baidu.com （ * 代表任意的英文字母或数字）</p>
+        </blockquote>
+    </div>
+</div>
+{/block}

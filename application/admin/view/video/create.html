@@ -1,0 +1,144 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+	.layui-form-label{
+		width: 200px !important;
+	}
+	.layui-input-inline{
+		width: 400px !important;
+	}
+</style>
+<div class="layui-tab layui-tab-card">
+
+	<ul class="layui-tab-title">
+		<li>
+			<a href="{:url('admin/video/index')}"><i class="layui-icon layui-icon-list"></i> 视频列表</a>
+		</li>
+		<li class="layui-this">
+			<a href="{:url('admin/video/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+		</li>
+	</ul>
+
+	<div class="layui-tab-content" style="background: #FFFFFF;">
+		<blockquote class="layui-elem-quote layui-quote-nm">
+			<p>标题、分享标题、分享描述中可以加入{city} 代表所在城市，{emoji} 代表随机表情</p>
+		</blockquote>
+
+		<form class="layui-form layui-form-pane" method="post">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">视频标题</label>
+				<div class="layui-input-inline">
+					<input type="text" name="title" required lay-verify="required" placeholder="视频标题，也会作为分享时所用标题" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 视频标题，也会作为分享时所用标题</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">VID</label>
+				<div class="layui-input-inline">
+					<input type="text" name="vid" id="vid" required lay-verify="required" placeholder="腾讯视频VID" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 腾讯视频的网址内，可以看到一串10位的字母数字组合</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">停止时间</label>
+				<div class="layui-input-inline">
+					<input type="text" name="miao" required lay-verify="required|number" value="30" placeholder="播放到多少秒，提醒用户分享" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 视频播放N秒后，提示用户分享，分享后即可继续播放</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">标签</label>
+				<div class="layui-input-inline">
+					<input type="text" name="label" required lay-verify="required" value="<p>必看</p><p>推荐</p><p>震撼</p>" placeholder="1-3个" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 1-3个，格式: &lt;p&gt;必看&lt;/p&gt;&lt;p&gt;实事&lt;/p&gt;&lt;p&gt;震撼&lt;/p&gt;</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-inline">
+					<input type="text" name="sort" required lay-verify="required|number" value="500" placeholder="数字越大越靠前" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 数字越大，在后台视频列表中，越靠前</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">访问量</label>
+				<div class="layui-input-inline">
+					<input type="text" name="view" required lay-verify="required|number" value="{:mt_rand(10000,99999)}" placeholder="访问量" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 随机数字，可修改</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">点赞数量</label>
+				<div class="layui-input-inline">
+					<input type="text" name="dianzan" required lay-verify="required|number" value="{:mt_rand(1000,5000)}" placeholder="点赞数量" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-form-mid layui-word-aux">* 随机数字，可修改，最小为1</div>
+			</div>
+
+			<div class="layui-form-item upload">
+				<label class="layui-form-label">分享图片</label>
+				<div class="layui-input-inline">
+					<input type="text" name="img" placeholder="分享时显示的图片" autocomplete="off" class="layui-input upload-input">
+				</div>
+				<button type="button" class="layui-btn upload-button"><i class="layui-icon layui-icon-upload"></i> 上传图片到本地</button>
+				<button type="button" class="layui-btn huoqutupian"><i class="layui-icon layui-icon-picture"></i> 自动获取图片</button>
+				<img onclick="showImg(this.src);" class="upload-img" style="height: 38px;">
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">分享标题</label>
+				<div class="layui-input-inline">
+					<input type="text" name="share_title" placeholder="分享时显示的标题" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">分享描述</label>
+				<div class="layui-input-inline">
+					<input type="text" name="share_desc" placeholder="分享时显示的描述" autocomplete="off" class="layui-input">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">状态</label>
+				<div class="layui-input-inline">
+					<input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="启用|禁用" checked>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="create">立即提交</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+
+	// 自动获取图片
+	$('.huoqutupian').click(function () {
+		var vid = $('#vid').val();
+		console.log(vid);
+		if (vid == ''){
+			layer.msg('vid不能为空');
+		}else{
+			$(".upload-input").val('https://vpic.video.qq.com/img/'+vid+'.png');
+			$(".upload-img").attr('src', 'https://vpic.video.qq.com/img/'+vid+'.png');
+		}
+
+	});
+</script>
+{/block}

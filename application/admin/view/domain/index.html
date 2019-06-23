@@ -1,0 +1,104 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li class="layui-this">
+            <a href="{:url('admin/domain/index')}"><i class="layui-icon layui-icon-list"></i> 域名列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/domain/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <div class="layui-btn-group">
+            <form class="layui-form" method="get">
+                <button class="layui-btn layui-btn-primary" onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新当前页面</button>
+                <input type="text" name="so" autocomplete="off" value="{:input('param.so')}" placeholder="搜索关键词" class="layui-btn layui-btn-primary">
+                <button class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                <a class="layui-btn layui-btn-primary" href="{:url()}"><i class="layui-icon layui-icon-ok-circle"></i>显示全部</a>
+            </form>
+        </div>
+
+        <table id="dataTable"></table>
+
+        <script type="text/html" id="status">
+            <input type="checkbox" name="status" lay-skin="switch" lay-text="已启用|已禁用" data-href="{:url('status')}?t=domains&id={{ d.id }}" lay-filter="switchStatus" value="{{ d.status }}" {{ d.status==1 ? 'checked' : '' }}>
+        </script>
+
+        <script type="text/html" id="jiance">
+            {{d.jiance==1 ? '检测' : '<span style="color: red;">不检测</span>'}}
+        </script>
+
+        <script type="text/html" id="type">
+            {{d.type==1 ? '<button type="button" class="layui-btn layui-btn-xs">入口域名</button>' : ''}}
+            {{d.type==2 ? '<button type="button" class="layui-btn layui-btn-xs layui-btn-normal">落地域名</button>' : ''}}
+            {{d.type==3 ? '<button type="button" class="layui-btn layui-btn-xs layui-btn-danger">分享域名</button>' : ''}}
+            {{d.type==9 ? '<button type="button" class="layui-btn layui-btn-xs layui-btn-warm"  >跳转域名</button>' : ''}}
+        </script>
+
+        <script type="text/html" id="gzh">
+            {{	d.gongzh.account_name	}}
+        </script>
+
+        <script type="text/html" id="barDemo">
+            <div class="layui-btn-group">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" href="{:url('edit')}?id={{ d.id }}"><i class="layui-icon layui-icon-edit"></i>改</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="del('domains', {{ d.id }});"><i class="layui-icon layui-icon-delete"></i>删</a>
+            </div>
+        </script>
+
+    </div>
+</div>
+
+<div class="layui-tab layui-tab-card">
+    <ul class="layui-tab-title">
+        <li class="layui-this">简介说明</li>
+    </ul>
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <p><b>仅能添加两种域名：</b></p>
+            <p><span style="color: #FF5722;">1、普通域名：</span>常见的域名，包括顶级域名、二级域名等，例如：baidu.com 或 www.baidu.com</p>
+            <p><span style="color: #FF5722;">2、泛 域 名：</span>无限二级域名，格式：*.baidu.com （ * 代表任意的英文字母或数字）</p>
+        </blockquote>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+
+        table.render({
+            elem: '#dataTable',
+            url: "{:url()}?so={:trim(input('param.so'))}",
+            title: '数据表',
+            cellMinWidth: 200,
+            limit: 20,
+            cols: [
+                [
+                    {fixed: 'left',		title:'操作',	width:120,	align:'center',	toolbar:'#barDemo'},
+                    {field: 'status',	title:'状态',	width:110,	align:'center',	sort:true,	templet:'#status'},
+                    {field: 'sort',		title:'排序',	width:100,	align:'center',	sort:true},
+                    {field: 'gid',		title:'所属公众号',	width:150,	align:'center',	sort:true,	templet:'#gzh'},
+                    {field: 'domain',	title:'域名',	width:200,	align:'center',	sort:true},
+                    {field: 'ip',	title:'ip',	width:200,	align:'center',	sort:true},
+                    //{field: 'type',		title:'域名类型',	width:120,	align:'center',	sort:true,	templet:'#type'},
+                    //{field: 'jiance',	title:'域名检测',	width:120,	align:'center',	sort:true,	templet:'#jiance'},
+                   // {field: 'jiekou',	title:'接口状态',	width:120,	align:'center',	sort:true},
+                {field: 'update_time',	title:'更新时间',	width:180,	align:'center',	sort:true},
+                    {field: 'desc',		title:'备注信息',	sort:true},
+                ]
+            ],
+            page: true
+        });
+    });
+</script>
+{/block}

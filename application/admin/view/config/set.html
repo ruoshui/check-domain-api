@@ -1,0 +1,184 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+<style>
+    .layui-form-label{
+        width: 200px !important;
+    }
+    .layui-input-inline{
+        width: 400px !important;
+    }
+</style>
+
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li {:input('param.group')=='base'||input('param.group') == null?' class="layui-this"':''}>
+            <a href="{:url('admin/config/set',['group'=>'base'])}">基础</a>
+        </li>
+        <li {:input('param.group')=='sys'   ?' class="layui-this"':''}>
+            <a href="{:url('admin/config/set',['group'=>'sys'])}"   >系统</a>
+        </li>
+        <li {:input('param.group')=='video' ?' class="layui-this"':''}>
+            <a href="{:url('admin/config/set',['group'=>'video'])}" >视频<span  class="layui-badge-dot"></span></a>
+        </li>
+        <li {:input('param.group')=='qita' ?' class="layui-this"':''}>
+            <a href="{:url('admin/config/set',['group'=>'qita'])}">其他</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <form class="layui-form layui-form-pane" action="">
+            {foreach $data as $v}
+
+            {if $v.type == 'input'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="{$v.name}" value="{$v.value}" placeholder="请输入{$v.title}" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'textarea'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    <textarea name="{$v.name}" placeholder="请输入{$v.title}" class="layui-textarea">{$v.value}</textarea>
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'switch'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="{$v.name}" value="1" lay-skin="switch" lay-text="{$v['options'][1]?$v['options'][1]:'启用'}|{$v['options'][0]?$v['options'][0]:'禁用'}" {$v.value==1?' checked':''}>
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'radio'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    {foreach $v.options as $kk => $vv}
+                    <input type="radio" name="{$v.name}" value="{$kk}" title="{$vv}" {if condition="$kk eq $v.value"}checked{/if}>
+                    {/foreach}
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'checkbox'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    {foreach $v.options as $kk => $vv}
+                    <input type="checkbox" name="{$v.name}[]" value="{$kk}" title="{$vv}" lay-skin="primary" {if condition="in_array($kk, $v['value'])"}checked{/if}>
+                    {/foreach}
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'select'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    <select name="{$v.name}" lay-verify="required">
+                        {foreach $v.options as $kk => $vv}
+                        <option value="{$kk}" {if condition="$kk eq $v.value"}selected{/if}>{$vv}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'image'}
+            <div class="layui-form-item upload">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="{$v.name}" value="{$v.value}" placeholder="请上传{$v.title}" autocomplete="off" class="layui-input upload-input">
+                </div>
+                <button type="button" class="layui-btn upload-button"><i class="layui-icon layui-icon-upload"></i> 上传图片到本地</button>
+                <img onclick="showImg(this.src);" class="upload-img" src="{$v.value}" style="height: 38px;">
+            </div>
+            {/if}
+
+            {if $v.type == 'file'}
+
+            {/if}
+
+
+
+            {if $v.type == 'tags'}
+
+            {/if}
+
+            {if $v.type == 'hidden'}
+
+            {/if}
+
+            {if $v.type == 'array'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$v.title}</label>
+                <div class="layui-input-inline">
+                    <textarea rows="6" class="layui-textarea" name="{$v.name}" autocomplete="off" placeholder="请填写{$v.title}">{$v.value}</textarea>
+                </div>
+                <div class="layui-form-mid layui-word-aux">{:htmlspecialchars_decode($v.tips)}</div>
+            </div>
+            {/if}
+
+            {if $v.type == 'datetime'}
+
+            {/if}
+
+            {if $v.type == 'date'}
+
+            {/if}
+
+            {if $v.type == 'time'}
+
+            {/if}
+
+            {/foreach}
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="doit">立即提交</button>
+
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+
+        //监听提交
+        form.on('submit(doit)', function(data){
+            $.post("{:url()}?group={:input('param.group','base')}", data.field, function(res) {
+                if(res.code == 1) {
+                    layer.msg(res.msg, {icon: 1, time:1000});
+                } else {
+                    layer.msg(res.msg, {icon: 2, time:1000});
+                }
+            }, 'json');
+            return false;
+        });
+    });
+</script>
+{/block}

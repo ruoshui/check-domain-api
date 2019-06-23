@@ -1,0 +1,117 @@
+{extend name="public/inc" /}
+
+{block name='main'}
+
+<style>
+    .layui-elem-quote  b{color: #098;font-weight: bold;font-size: 110%;}
+    .layui-elem-quote h4{color: #f52;font-weight: bold;font-size: 110%;margin-top: 10px;}
+</style>
+
+<div class="layui-tab layui-tab-card">
+
+    <ul class="layui-tab-title">
+        <li class="layui-this">
+            <a href="{:url('admin/jump/list')}"><i class="layui-icon layui-icon-list"></i> 跳转列表</a>
+        </li>
+        <li>
+            <a href="{:url('admin/jump/create')}"><i class="layui-icon layui-icon-add-1"></i> 添加</a>
+        </li>
+    </ul>
+
+    <div class="layui-tab-content" style="background: #FFFFFF;">
+
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            <h2 style="color: #FF5722;">使用前，请先添加域名｛类型：跳转域名｝，支持泛域名</h2>
+            <h2 style="color: #1E9FFF;">---</h2>
+        </blockquote>
+
+        <div class="layui-btn-group">
+            <form class="layui-form" method="get">
+                <button class="layui-btn layui-btn-primary" onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新当前页面</button>
+                <input type="text" name="so" autocomplete="off" value="{:input('param.so')}" placeholder="搜索关键词" class="layui-btn layui-btn-primary">
+                <button class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-search"></i>搜索</button>
+                <a class="layui-btn layui-btn-primary" href="{:url()}"><i class="layui-icon layui-icon-ok-circle"></i>显示全部</a>
+            </form>
+        </div>
+
+        <table id="dataTable"></table>
+
+        <script type="text/html" id="status">
+            <input type="checkbox" name="status" lay-skin="switch" lay-text="已启用|已禁用" data-href="{:url('status')}?t=jumps&id={{ d.id }}" lay-filter="switchStatus" value="{{ d.status }}" {{ d.status==1 ? 'checked' : '' }}>
+        </script>
+
+        <script type="text/html" id="rukou">
+
+            <div class="layui-btn-group">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" href="http://{{tihuan(d.domain.domain)}}/u/{{ d.id }}" target="_blank">
+                    <i class="layui-icon layui-icon-link"></i>打开
+                </a>
+
+                <a class="layui-btn layui-btn-primary layui-btn-xs"
+                   onclick="showImg('https://api.uomg.com/api/qrcode?url=http://{{tihuan(d.domain.domain)}}/u/{{ d.id }}')">
+                    <i class="layui-icon layui-icon-chart"></i>二维码
+                </a>
+
+                <a class="layui-btn layui-btn-primary layui-btn-xs"
+                   onclick="layer.alert('http://{{tihuan(d.domain.domain)}}/u/{{ d.id }}', {title: false,shade: 0.5,closeBtn: 1,shadeClose: true,anim: 3,btn:false});">
+                    <i class="layui-icon layui-icon-search"></i>网址
+                </a>
+            </div>
+
+        </script>
+
+        <script type="text/html" id="barDemo">
+            <div class="layui-btn-group">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" href="{:url('edit')}?id={{ d.id }}"><i class="layui-icon layui-icon-edit"></i>改</a>
+                <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="del('jumps', {{ d.id }});"><i class="layui-icon layui-icon-delete"></i>删</a>
+            </div>
+        </script>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript">
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table,
+            layer = layui.layer,
+            form = layui.form,
+            $ = layui.jquery;
+
+        table.render({
+            elem: '#dataTable',
+            url: "{:url()}?so={:trim(input('param.so'))}",
+            title: '数据表',
+            cellMinWidth: 200,
+            limit: 20,
+            cols: [[
+					{fixed:'left',	title:'操作',	width:120,	align:'center',	toolbar:'#barDemo'},
+					{field:'status',title:'状态',	width:110,	align:'center',	sort:true,	templet:'#status'},
+					{field:'name',	title:'项目标签',	width:200,	align:'center',	sort:true},
+					{field:'rukou',	title:'入口网址',	width:210,	align:'center',	templet:'#rukou'},
+					{field:'view',	title:'访问量',	width:100,	align:'center',	sort:true},
+			{field: 'create_time',	title:'更新时间',	width:180,	align:'center',	sort:true},
+                ]],
+            page: true
+        });
+    });
+
+
+    /*随机一个字符*/
+    function a(a) {
+        var d,
+            e,
+            b = "qwertyuiopasdfghjklzxcvbnm0123456789",
+            c = "";
+        for(d = 0; a > d; d += 1)
+            e = Math.random() * b.length, e = Math.floor(e), c += b.charAt(e);
+        return c
+    }
+
+    function tihuan(url) {
+        return url.replace(/\*/g, a(6));
+    }
+
+</script>
+{/block}
